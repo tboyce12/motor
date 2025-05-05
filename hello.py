@@ -22,8 +22,34 @@ def get_task(pk):
 
 @app.post("/tasks")
 def create_task():
-    title = request.form["title"]
     global tasks, tasks_pk
-    tasks.append({"pk": tasks_pk, "title": title})
+    data = request.json
+    if not data:
+        abort(400)
+    title = data["title"]
+    t = {"pk": tasks_pk, "title": title}
+    tasks.append(t)
     tasks_pk += 1
+    return {"ok": True, "task": t}
+
+@app.put("/tasks/<int:pk>")
+def update_task(pk):
+    global tasks, tasks_pk
+    t = next((t for t in tasks if t["pk"] == pk), None)
+    data = request.json
+    if not t:
+        abort(404)
+    if not data:
+        abort(400)
+    title = data.get("title", t["title"])
+    t["title"] = title
+    return {"ok": True, "task": t}
+
+@app.delete("/tasks/<int:pk>")
+def delete_task(pk):
+    global tasks, tasks_pk
+    t = next((t for t in tasks if t["pk"] == pk), None)
+    if not t:
+        abort(404)
+    tasks = [t for t in tasks if t["pk"] != pk]
     return {"ok": True}
