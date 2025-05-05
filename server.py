@@ -26,7 +26,9 @@ def create_task():
     data = request.json
     if not data:
         abort(400)
-    title = data["title"]
+    title = data.get("title")
+    if not title:
+        abort(400)
     t = {"pk": tasks_pk, "title": title}
     tasks.append(t)
     tasks_pk += 1
