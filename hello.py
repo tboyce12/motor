@@ -23,7 +23,7 @@ def get_task(pk):
 @app.post("/tasks")
 def create_task():
     title = request.form["title"]
-
     global tasks, tasks_pk
     tasks.append({"pk": tasks_pk, "title": title})
+    tasks_pk += 1
     return {"ok": True}
